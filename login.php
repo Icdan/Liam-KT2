@@ -5,17 +5,16 @@ include "db/db_connection.php";
 
 if (isset($_POST['login'])) {
 
-    $email = $_POST['email'];
+    $username = $_POST['username'];
     $password = $_POST['password'];
 
-    $loginQuery = mysqli_query($conn, "SELECT * FROM `users` WHERE email = '$email' && password = '$password'");
+    $loginQuery = mysqli_query($conn, "SELECT * FROM `medewerker` WHERE gebruikersnaam = '$username' && wachtwoord = '$password'");
 
     if ($loginQuery) {
         $loginResult = mysqli_num_rows($loginQuery);
         if ($loginResult == 1) {
             $row = mysqli_fetch_assoc($loginQuery);
-            $_SESSION['name'] = $row['name'];
-            $_SESSION['email'] = $row['email'];
+            $_SESSION['voornaam'] = $row['voornaam'];
             $_SESSION['user_id'] = $row['user_id'];
             $_SESSION['loggedin'] = true;
             header("Location: index.php");
@@ -23,7 +22,7 @@ if (isset($_POST['login'])) {
             echo "Please enter a valid username or password";
         }
     } else {
-        echo "bah";
+        echo "This is a testing error so I know where it goes wrong";
     }
 }
 
@@ -43,16 +42,15 @@ if (isset($_POST['login'])) {
         <div class="col-xs-12">
             <form action="" method="post">
                 <div class="form-group">
-                    <label>E-mail</label>
-                    <input type="email" name="email" placeholder="Your e-mail" maxlength="75" required>
+                    <label>Gebruikersnaam</label>
+                    <input type="text" name="username" placeholder="Uw gebruikersnaam" maxlength="75" required>
                 </div>
                 <div class="form-group">
-                    <label>Password</label>
-                    <input type="password" name="password" placeholder="Your password" maxlength="25" required>
+                    <label>Wachtwoord</label>
+                    <input type="password" name="password" placeholder="Uw wachtwoord" maxlength="25" required>
                 </div>
                 <input type="submit" name="login" value="Log in" class="btn btn-primary">
             </form>
-            <p>Don't have an account? Sign up <a href="register.php">here!</a></p>
         </div>
     </div>
     <?php
