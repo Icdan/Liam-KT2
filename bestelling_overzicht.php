@@ -37,12 +37,21 @@ include "includes/navbar.php";
 
             echo "<h3>Reservering: " . $reserveringNaamRow['naam'] . "</h3>";
 
-            $bestellingQuery = mysqli_query($conn, "SELECT bestelling_per_reservering.aantal AS aantal, menu_item.naam AS itemNaam, TRUNCATE(menu_item.prijs / 100, 2) AS prijs 
+            if ($_SESSION['gebruikersnaam'] == "keuken") {
+                $bestellingQuery = mysqli_query($conn, "SELECT bestelling_per_reservering.aantal AS aantal, menu_item.naam AS itemNaam, TRUNCATE(menu_item.prijs / 100, 2) AS prijs 
+FROM `bestelling_per_reservering` 
+INNER JOIN menu_item ON menu_item.id_item = bestelling_per_reservering.menu_item_id_item 
+INNER JOIN menu_categorieen ON menu_categorieen.id_menu_categorieen = menu_item.menu_categorieen_id_menu_categorieen 
+INNER JOIN reservering ON reservering.id_reservering = bestelling_per_reservering.reservering_id_reservering 
+WHERE reservering_id_reservering = '$id' AND (menu_categorieen.id_menu_categorieen = '5' OR menu_categorieen.id_menu_categorieen = '6')");
+            } else {
+                $bestellingQuery = mysqli_query($conn, "SELECT bestelling_per_reservering.aantal AS aantal, menu_item.naam AS itemNaam, TRUNCATE(menu_item.prijs / 100, 2) AS prijs 
 FROM `bestelling_per_reservering` 
 INNER JOIN menu_item ON menu_item.id_item = bestelling_per_reservering.menu_item_id_item 
 INNER JOIN menu_categorieen ON menu_categorieen.id_menu_categorieen = menu_item.menu_categorieen_id_menu_categorieen 
 INNER JOIN reservering ON reservering.id_reservering = bestelling_per_reservering.reservering_id_reservering 
 WHERE reservering_id_reservering = '$id'");
+            }
 
             if ($bestellingQuery) {
                 $bestelAmount = mysqli_num_rows($bestellingQuery);
@@ -62,50 +71,53 @@ WHERE reservering_id_reservering = '$id'");
                     echo "<p>Sorry, er zijn nog geen bestellingen geplaatst</p>";
                 }
             }
-            ?>
+            if ($_SESSION['gebruikersnaam'] !== "keuken" && $_SESSION['gebruikersnaam'] !== "bar") {
+                echo "
             <hr>
         </div>
     </div>
-    <div class="row">
-        <div class="col-12 text-center">
+    <div class=\"row\">
+        <div class=\"col-12 text-center\">
             <h3>Bestelling plaatsen</h3>
         </div>
     </div>
-    <div class="row">
-        <div class="col-3">
-            <button type="button" onclick="buttonWarmeDranken()">Warme dranken</button>
+    <div class=\"row\">
+        <div class=\"col-3\">
+            <button type=\"button\" onclick=\"buttonWarmeDranken()\">Warme dranken</button>
             <br>
-            <button type="button" onclick="buttonBieren()">Bieren</button>
+            <button type=\"button\" onclick=\"buttonBieren()\">Bieren</button>
             <br>
-            <button type="button" onclick="buttonHuiswijnen()">Huiswijnen</button>
+            <button type=\"button\" onclick=\"buttonHuiswijnen()\">Huiswijnen</button>
             <br>
-            <button type="button" onclick="buttonFrisdranken()">Frisdranken</button>
+            <button type=\"button\" onclick=\"buttonFrisdranken()\">Frisdranken</button>
             <br>
-            <button type="button" onclick="buttonWarmeHapjes()">Warme hapjes</button>
+            <button type=\"button\" onclick=\"buttonWarmeHapjes()\">Warme hapjes</button>
             <br>
-            <button type="button" onclick="buttonKoudeHapjes()">Koude hapjes</button>
+            <button type=\"button\" onclick=\"buttonKoudeHapjes()\">Koude hapjes</button>
             <br>
         </div>
-        <div class="col-9 text-center" id="ajax-items-container">
+        <div class=\"col-9 text-center\" id=\"ajax-items-container\">
         </div>
     </div>
     <hr>
-    <div class="row">
-        <div class="col-12 text-center" id="ajax-bon-container">
-            <form method="post" action="bon.php">
+    <div class=\"row\">
+        <div class=\"col-12 text-center\" id=\"ajax-bon-container\">
+            <form method=\"post\" action=\"bon.php\">
                 <label>Hoe is er betaald?</label><br>
-                <select name="betaalOptie">
-                    <option value="pin">PIN / Creditcard</option>
-                    <option value="contant">Contant</option>
+                <select name=\"betaalOptie\">
+                    <option value=\"pin\">PIN / Creditcard</option>
+                    <option value=\"contant\">Contant</option>
                 </select>
                 <br><br>
                 <label>Hoeveel is er betaald?</label><br>
-                <input type="number" name="hoeveelheidBetaald" step="any">
+                <input type=\"number\" name=\"hoeveelheidBetaald\" step=\"any\">
                 <br>
-                <input type="submit" name="submit">
+                <input type=\"submit\" name=\"submit\" value=\"Print bon\">
 
         </div>
-    </div>
+    </div>";
+            }
+    ?>
 </div>
 <!-- Javascript files -->
 <script>

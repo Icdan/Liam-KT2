@@ -16,6 +16,7 @@ if (isset($_POST['login'])) {
             $row = mysqli_fetch_assoc($loginQuery);
             $_SESSION['voornaam'] = $row['voornaam'];
             $_SESSION['user_id'] = $row['user_id'];
+            $_SESSION['gebruikersnaam'] = $row['gebruikersnaam'];
             $_SESSION['loggedin'] = true;
             header("Location: index.php");
         } elseif ($_POST) {
