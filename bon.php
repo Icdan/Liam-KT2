@@ -19,7 +19,7 @@ if (!$_SESSION['loggedin']) {
     <?php
     include "includes/header.php";
     ?>
-    <title>Bestel overzicht</title>
+    <title>Bon overzicht</title>
 </head>
 <body>
 <?php
@@ -37,7 +37,7 @@ include "includes/navbar.php";
 
             echo "<h3>Bon: " . $reserveringNaamRow['naam'] . "</h3>";
 
-            $bonQuery = "SELECT bestelling_per_reservering.aantal AS aantal, menu_item.naam AS itemNaam, TRUNCATE(menu_item.prijs / 100, 2) AS prijs, reservering.tafel as tafel, reservering.tijd as tijd, DATE_FORMAT(reservering.datum, \"%d-%M-%Y\") as datum
+            $bonQuery = "SELECT bestelling_per_reservering.aantal AS aantal, menu_item.naam AS itemNaam, menu_item.prijs AS prijs, reservering.tafel as tafel, reservering.tijd as tijd, DATE_FORMAT(reservering.datum, \"%d-%M-%Y\") as datum
 FROM `bestelling_per_reservering` 
 INNER JOIN menu_item ON menu_item.id_item = bestelling_per_reservering.menu_item_id_item 
 INNER JOIN menu_categorieen ON menu_categorieen.id_menu_categorieen = menu_item.menu_categorieen_id_menu_categorieen 
@@ -45,7 +45,7 @@ INNER JOIN reservering ON reservering.id_reservering = bestelling_per_reserverin
 WHERE reservering_id_reservering = '$id'";
             $bonResult = mysqli_query($conn, $bonQuery);
 
-            $totaalPrijsQuery = "SELECT TRUNCATE(SUM(menu_item.prijs) /100, 2) AS totaalprijs
+            $totaalPrijsQuery = "SELECT SUM(menu_item.prijs) AS totaalprijs
 FROM `bestelling_per_reservering` 
 INNER JOIN menu_item ON menu_item.id_item = bestelling_per_reservering.menu_item_id_item 
 INNER JOIN menu_categorieen ON menu_categorieen.id_menu_categorieen = menu_item.menu_categorieen_id_menu_categorieen 
@@ -92,7 +92,18 @@ WHERE reservering_id_reservering = '$id'";
                     echo "</table>";
                 }
             }
+            echo "<input type='button' value='Print this page' onclick='printPage()' id='printButton' />";
+
             include "includes/footer.php";
             ?>
+        </div>
+    </div>
+</div>
+<script>
+    function printPage() {
+        document.getElementById("printButton").style.visibility = "hidden";
+        window.print();
+    }
+</script>
 </body>
 </html>

@@ -7,6 +7,27 @@ include "db/db_connection.php";
 if (!$_SESSION['loggedin']) {
     header("Location: login.php");
 }
+
+if(isset($_POST['opslaanPrijsWijziging']))
+{
+
+    $prijsWijzigingDatabase = $_POST['prijsWijzigingDatabase'];
+    $prijsDieVeranderdWord = $_POST['prijsDieVeranderdWord'];
+    mysqli_query($conn, "UPDATE menu_item SET prijs = '$prijsDieVeranderdWord' WHERE id_item = '$prijsWijzigingDatabase'");
+
+} elseif (isset($_POST['opslaanInBestelling'])) {
+    $reservationOrderid = $_POST['reservationOrderid'];
+    $menuItemid = $_POST['reservationOrderItemid'];
+    $menuItemCategoryid = $_POST['reservationOrderCategoryid'];
+    $menuItemAmount = $_POST['reservationOrderAmount'];
+
+    $newOrder = mysqli_query($conn, "INSERT INTO `bestelling_per_reservering` (`reservering_id_reservering`, `menu_item_id_item`, `menu_item_menu_categorieen_id_menu_categorieen`, `aantal`) VALUES ('$reservationOrderid', '$menuItemid', '$menuItemCategoryid', '$menuItemAmount') ");
+
+    if (!$newOrder) {
+        mysqli_query($conn, "UPDATE bestelling_per_reservering SET aantal = (aantal + '$menuItemAmount') WHERE menu_item_id_item = '$menuItemid'");
+    }
+}
+
 ?>
 <!doctype html>
 <html lang="en">
