@@ -1,9 +1,9 @@
 <?php
-//Start the session to work with PHP sessions
+// Start the sessie om met PHP sessies te starten
 session_start();
-//Connect to database
+// Maak connectie met de database;
 include "db/db_connection.php";
-//If user isn't logged in they'll be redirected to the log-in page.
+// Als de bezoeker niet ingelogd is, wordt de bezoeker verwezen naar de log-in pagina
 if (!$_SESSION['loggedin']) {
     header("Location: login.php");
 }
@@ -11,11 +11,11 @@ if (!$_SESSION['loggedin']) {
 <!doctype html>
 <html lang="en">
 <head>
-    <!-- Required meta tags -->
+    <!-- Vereiste meta tags voor Bootstrap -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <!-- CSS files -->
+    <!-- CSS -->
     <?php
     include "includes/header.php";
     ?>
@@ -29,14 +29,21 @@ include "includes/navbar.php";
     <div class="row">
         <div class="col-12 text-center">
             <?php
+            // Initieer variabel met de id van de reservering waar we op geklikt hebben
             $id = $_POST['id_reservering'];
+            // Stop de id in een sessie variabel
             $_SESSION['id_reservering'] = $_POST['id_reservering'];
 
+            // Maak een query naar de database voor de naam onder wie de reservering staat
             $reserveringNaamQuery = mysqli_query($conn, "SELECT naam from reservering WHERE id_reservering = '$id'");
+            // Haal de data op die als resultaat wordt gegeven en maak daar een rij van zodat we kunnen pakken wat we precies willen
             $reserveringNaamRow = mysqli_fetch_assoc($reserveringNaamQuery);
 
+            // Toon de de naam die we opgehaald hebben en bij de reservering hoort
             echo "<h3>Reservering: " . $reserveringNaamRow['naam'] . "</h3>";
 
+            // Als de gebruiker 'keuken' is die de website ziet, kan die alleen maar de eetgerechten zien die besteld zijn
+            // Als het een andere gebruiker is kan die alle gerechten zien
             if ($_SESSION['gebruikersnaam'] == "keuken") {
                 $bestellingQuery = mysqli_query($conn, "SELECT bestelling_per_reservering.aantal AS aantal, menu_item.naam AS itemNaam, menu_item.prijs AS prijs 
 FROM `bestelling_per_reservering` 
@@ -53,8 +60,12 @@ INNER JOIN reservering ON reservering.id_reservering = bestelling_per_reserverin
 WHERE reservering_id_reservering = '$id'");
             }
 
+            // Als de query werkt
             if ($bestellingQuery) {
+                // We tellen het aantal rijen dat we terugkrijgen
                 $bestelAmount = mysqli_num_rows($bestellingQuery);
+                // Als het 1 of meer is gaan de door de resultaten heen loopen en alle data weergeven
+                // Als er geen data is zijn er geen bestellingen voor die reservering en wordt dat gemeld
                 if ($bestelAmount > 0) {
                     echo "<table>";
                     echo "<tr>";
@@ -71,6 +82,8 @@ WHERE reservering_id_reservering = '$id'");
                     echo "<p>Sorry, er zijn nog geen bestellingen geplaatst</p>";
                 }
             }
+            // Als het niet de keuken of bar is die ingelogd zijn, is het waarschijnlijk iemand die een bestelling moet kunnen plaatsen.
+            // Dus als het geen keuken of bar, worden er producten laten zien voor een bestelling en kan de prijs van een product gewijzigd worden
             if ($_SESSION['gebruikersnaam'] !== "keuken" && $_SESSION['gebruikersnaam'] !== "bar") {
                 echo "
             <hr>
@@ -121,8 +134,10 @@ WHERE reservering_id_reservering = '$id'");
         </div>
     </div>
 </div>
-<!-- Javascript files -->
+<!-- Javascript -->
 <script>
+    // Hier gaan we met AJAX aan de slag zodat we tussen de verschillende categorieen van gerechten kunnen wisselen zonder elke keer de pagina hoeven te herladen
+    // Verschillende knoppen laden de verschillende functies terwijl de herhalende code in 1 functie is gestopt die opnieuw wordt aangeroepen
     var xhttp = new XMLHttpRequest();
 
     function ajaxCallMenuItems() {

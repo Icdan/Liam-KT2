@@ -1,8 +1,12 @@
 <?php
+// Start the sessie om met PHP sessies te starten
 session_start();
-
+// Maak connectie met de database;
 include "db/db_connection.php";
 
+// Als er op de login knop is gedrukt worden de ingevoerde gebruikersnaam en wachtwoord vergeleken met wat er in de database staat
+// Als het klopt wordt er ingelogd en een aantal behulpzame data dat gekoppeld is aan de gebruiker meegegeven
+// Bijvoorbeel de voornaam zodat we ze kunnen begroeten op de hoofdpagina
 if (isset($_POST['login'])) {
 
     $username = $_POST['username'];
@@ -20,20 +24,22 @@ if (isset($_POST['login'])) {
             $_SESSION['loggedin'] = true;
             header("Location: index.php");
         } elseif ($_POST) {
-            echo "Please enter a valid username or password";
+            echo "Vul alstublieft de juiste gebruikersnaam of wachtwoord in";
         }
-    } else {
-        echo "This is a testing error so I know where it goes wrong";
     }
 }
-
 
 ?>
 <!doctype html>
 <html lang="en">
 <head>
+    <!-- Vereiste meta tags voor Bootstrap -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- CSS -->
     <?php
-    include "includes/header.php"
+    include "includes/header.php";
     ?>
     <title>Log-in page</title>
 </head>
@@ -54,8 +60,10 @@ if (isset($_POST['login'])) {
             </form>
         </div>
     </div>
-    <?php
-    include "includes/footer.php"
-    ?>
+</div>
+<!-- Javascript -->
+<?php
+include "includes/footer.php"
+?>
 </body>
 </html>

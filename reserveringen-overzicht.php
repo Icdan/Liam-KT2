@@ -1,13 +1,15 @@
 <?php
-//Start the session to work with PHP sessions
+// Start the sessie om met PHP sessies te starten
 session_start();
-//Connect to database
+// Maak connectie met de database;
 include "db/db_connection.php";
-//If user isn't logged in they'll be redirected to the log-in page.
+// Als de bezoeker niet ingelogd is, wordt de bezoeker verwezen naar de log-in pagina
 if (!$_SESSION['loggedin']) {
     header("Location: login.php");
 }
 
+// Als we aankomen op deze pagina vanaf de form waar de knop in zit wordt de prijsverandering doorgezet naar de database
+// Als we vanaf de andere form komen wordt de bestelling overzicht die aan de reservering zit waar we net vandaan komen ge-update met een nieuwe bestelling
 if(isset($_POST['opslaanPrijsWijziging']))
 {
 
@@ -32,11 +34,11 @@ if(isset($_POST['opslaanPrijsWijziging']))
 <!doctype html>
 <html lang="en">
 <head>
-    <!-- Required meta tags -->
+    <!-- Vereiste meta tags voor Bootstrap -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <!-- CSS files -->
+    <!-- CSS -->
     <?php
     include "includes/header.php";
     ?>
@@ -62,12 +64,16 @@ include "includes/navbar.php";
                     <th>Reservering gebruikt</th>
                 </tr>
                 <?php
+                // We halen een overzicht van alle reserveringen op, data van de reserveringen en of de gasten aangekomen zijn
                 $reserveringQuery = mysqli_query($conn, "SELECT *, IF(reservering_gebruikt, 'Ja', 'Nee') AS gebruikt from reservering ");
 
                 if ($reserveringQuery) {
                     $reserveringAmount = mysqli_num_rows($reserveringQuery);
+                    // We loopen door de opgehaalde data heen zodat we alle reserveringen kunnen neerzetten i.p.v alleen de laatste in de database
                     for ($count = 1; $count <= $reserveringAmount; $count++) {
                         $row = mysqli_fetch_assoc($reserveringQuery);
+                        // We halen de data die we opgehaald hebben apart en zetten het overzichtelijk neer.
+                        // Ook geven we de mogelijkheid om op een reservering te klikken en naar de bestellingen daarvan te kijken
                         echo "<tr>";
                         echo "<td>" . $row['datum'] . "</td><td>" . $row['tijd'] . "</td><td>" . $row['tafel'] . "</td><td>" . $row['naam'] . "</td><td>" . $row['telefoon'] . "</td><td>" . $row['aantal_personen'] . "</td><td>" . $row['commentaar'] . "</td><td>" . $row['allergieen'] . "</td><td>" . $row['gebruikt'] . "</td>";
                         echo "<td><form method='post' action='bestelling_overzicht.php'><input type='hidden' value=" . $row['id_reservering'] . " name='id_reservering'><input type='submit' value='Bestellingen'></form></td>";
