@@ -49,15 +49,6 @@ INNER JOIN reservering ON reservering.id_reservering = bestelling_per_reserverin
 WHERE reservering_id_reservering = '$id'";
             $bonResult = mysqli_query($conn, $bonQuery);
 
-            // Query voor de totaalprijs van alle bestellingen zodat de klant weet hoeveel er betaald moet worden zonder zelf te hoeven rekenen. Dit resultaat wordt in een variabel gestopt.
-            $totaalPrijsQuery = "SELECT SUM(menu_item.prijs) AS totaalprijs
-FROM `bestelling_per_reservering` 
-INNER JOIN menu_item ON menu_item.id_item = bestelling_per_reservering.menu_item_id_item 
-INNER JOIN menu_categorieen ON menu_categorieen.id_menu_categorieen = menu_item.menu_categorieen_id_menu_categorieen 
-INNER JOIN reservering ON reservering.id_reservering = bestelling_per_reservering.reservering_id_reservering 
-WHERE reservering_id_reservering = '$id'";
-            $totaalPrijsResult = mysqli_query($conn, $totaalPrijsQuery);
-
             $bonDataResult = mysqli_query($conn, $bonQuery);
             $bonDataRow = mysqli_fetch_assoc($bonDataResult);
             echo "Tafel: " . $bonDataRow['tafel'] . "<br>";
@@ -65,7 +56,7 @@ WHERE reservering_id_reservering = '$id'";
             echo "Tijd: " . $bonDataRow['tijd'] . "<br>";
 
             // Als beide queries succesvol zijn
-            if ($bonQuery && $totaalPrijsQuery) {
+            if ($bonQuery) {
                 $bonAmount = mysqli_num_rows($bonResult);
                 if ($bonAmount > 0) {
                     // Als er een resultaat is van de queries

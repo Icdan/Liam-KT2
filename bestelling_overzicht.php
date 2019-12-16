@@ -60,6 +60,15 @@ INNER JOIN reservering ON reservering.id_reservering = bestelling_per_reserverin
 WHERE reservering_id_reservering = '$id'");
             }
 
+            // Query voor de totaalprijs van alle bestellingen zodat de klant weet hoeveel er betaald moet worden zonder zelf te hoeven rekenen. Dit resultaat wordt in een variabel gestopt.
+            $totaalPrijsQuery = "SELECT SUM(menu_item.prijs) AS totaalprijs
+FROM `bestelling_per_reservering` 
+INNER JOIN menu_item ON menu_item.id_item = bestelling_per_reservering.menu_item_id_item 
+INNER JOIN menu_categorieen ON menu_categorieen.id_menu_categorieen = menu_item.menu_categorieen_id_menu_categorieen 
+INNER JOIN reservering ON reservering.id_reservering = bestelling_per_reservering.reservering_id_reservering 
+WHERE reservering_id_reservering = '$id'";
+            $totaalPrijsResult = mysqli_query($conn, $totaalPrijsQuery);
+
             // Als de query werkt
             if ($bestellingQuery) {
                 // We tellen het aantal rijen dat we terugkrijgen
@@ -67,16 +76,32 @@ WHERE reservering_id_reservering = '$id'");
                 // Als het 1 of meer is gaan de door de resultaten heen loopen en alle data weergeven
                 // Als er geen data is zijn er geen bestellingen voor die reservering en wordt dat gemeld
                 if ($bestelAmount > 0) {
+                    // Bereken de prijzen, afgaande op de prijs van 1 product en het aantal keer dat het product besteld is
+                    // Initialiseer een variabel met een cijfer zodat daar gerekend mee kan worden.
+                    // Waarde is 0 omdat de klant alleen hoeft te betalen wat hij besteld heeft.
+                    $totaalBestellingenPrijs = 0;
                     echo "<table>";
                     echo "<tr>";
-                    echo "<th>Gerecht</th><th>Aantal</th><th>Prijs per item</th>";
+                    echo "<th>Gerecht</th><th>Aantal</th><th>Prijs per item</th><th>Totaal</th>";
                     echo "</tr>";
                     for ($count = 1; $count <= $bestelAmount; $count++) {
                         $bestellingRow = mysqli_fetch_assoc($bestellingQuery);
+//                        echo "<tr>";
+//                        echo "<td>" . $bestellingRow['itemNaam'] . "</td><td>" . $bestellingRow['aantal'] . "</td><td>€" . $bestellingRow['prijs'] . "</td>";
+//                        echo "</tr>";
+
+                        $subtotaal = ($bestellingRow['prijs'] * $bestellingRow['aantal']);
+                        // Number_float wordt hier en later gebruikt om te zorgen dat er 2 decimalen worden laten zien, ook al is het "6.60", normaal wordt dit dan "6.6"
+                        $subtotaal = number_format((float)$subtotaal, 2);
                         echo "<tr>";
-                        echo "<td>" . $bestellingRow['itemNaam'] . "</td><td>" . $bestellingRow['aantal'] . "</td><td>€" . $bestellingRow['prijs'] . "</td>";
+                        echo "<td>" . $bestellingRow['itemNaam'] . "</td><td>€" . $bestellingRow['prijs'] . "</td><td>" . $bestellingRow['aantal'] . "</td><td>€" . $subtotaal . "</td>";
                         echo "</tr>";
+                        $totaalBestellingenPrijs = ($bestellingRow['prijs'] * $bestellingRow['aantal']) + $totaalBestellingenPrijs;
+                        $totaalBestellingenPrijs = number_format((float)$totaalBestellingenPrijs, 2);
                     }
+                    echo "<tr>";
+                    echo "<td></td><td></td><td></td><td>€" . $totaalBestellingenPrijs . "</td>";
+                    echo "</tr>";
                     echo "</table>";
                 } else {
                     echo "<p>Sorry, er zijn nog geen bestellingen geplaatst</p>";
