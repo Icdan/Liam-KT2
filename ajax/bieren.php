@@ -36,7 +36,7 @@ if (mysqli_num_rows($categoryResult) > 0) {
 </td>
 <td>€
 <form method='post' action='reserveringen-overzicht.php' id='editDrinksForm" . $tellenForms . "'></form>
-<input type='numbers' id='menuItemPrijs' name='prijsDieVeranderdWord' value='". $categoryItemRow['prijs'] . "' form='editDrinksForm" . $tellenForms . "'/>
+<input type='number' step='any' id='menuItemPrijs' name='prijsDieVeranderdWord' value='". $categoryItemRow['prijs'] . "' form='editDrinksForm" . $tellenForms . "'/>
 </td>
 <td>
 <input type='hidden' name='prijsWijzigingDatabase' value='" . $categoryItemRow['id_item'] ."' form='editDrinksForm" . $tellenForms . "'/>

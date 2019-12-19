@@ -9,7 +9,7 @@ if (!$_SESSION['loggedin']) {
 }
 ?>
 <!doctype html>
-<html lang="en">
+<html lang="nl-nl">
 <head>
     <!-- Vereiste meta tags voor Bootstrap -->
     <meta charset="utf-8">
