@@ -3,11 +3,11 @@
 // Database server
 $server = "localhost";
 // Database gebruiker
-$user = "deb7255_liam";
+$user = "root";
 // Wachtwoord voor gebruiker
-$password = "luxshot";
+$password = "";
 // Database selectie
-$db = "deb7255_liam";
+$db = "excellent_taste";
 
 // Defineer de variabel die we later gebruiken voor queries om contact te leggen met de database
 $conn = mysqli_connect($server, $user, $password, $db);
