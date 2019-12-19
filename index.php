@@ -26,6 +26,13 @@ if (!$_SESSION['loggedin']) {
 include "includes/navbar.php";
 ?>
 <div class="container">
+    <!--    Toegevoegd n.a.v. issue [[#320]]-->
+    <div class="row">
+        <div class="col text-center">
+            <img src="images/restaurant.jpg" alt="restaurant-foto" width="50%">
+        </div>
+    </div>
+    <!--    Einde Toegevoegd n.a.v. issue [[#320]]-->
     <div class="row">
         <div class="col text-center">
             <?php
